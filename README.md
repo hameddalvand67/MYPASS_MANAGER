@@ -1,91 +1,125 @@
-# گاوصندوق (Vault) — سایت مدیریت رمزها برای استفاده لوکال
 
-یک سایت جنگو ساده و کامل برای نگهداری اطلاعات ورود سرورها، سرویس‌ها و حساب‌های مختلف.
-فقط از طریق پنل ادمین جنگو مدیریت (اضافه/ویرایش/حذف) می‌شود، ولی برای دیدن و جستجوی
-اطلاعات یک صفحه‌ی اختصاصی و تمیز با دکمه‌ی کپی برای تک‌تک فیلدها دارد.
+# Vault — Local Password & Credential Management Website
 
-## مفهوم داده‌ها
+A simple and complete Django website for storing login credentials and information for servers, services, and various accounts.
 
-- **آیتم (Entry)**: یک واحد کلی، مثلا یک سرور، یک ایمیل، یک بانک و ... . شامل عنوان،
-  دسته‌بندی و یادداشت کلی.
-- **بخش (Section)**: هر آیتم می‌تواند چند بخش داشته باشد (مثلا یک سرور هم SSH دارد هم
-  پنل هاست هم دیتابیس). هر بخش لینک، نام کاربری، رمز عبور و یک فیلد اطلاعات اضافه دارد.
+The data can only be managed (add/edit/delete) through the Django Admin Panel. However, a clean and dedicated interface is provided for viewing and searching stored information, with a copy button for each individual field.
 
-این ساختار برای همون سناریویی طراحی شده که گفتی: یک سرور می‌تونه چند قسمت مجزا با
-لینک/رمز جدا داشته باشه.
+## Data Model
 
-## نصب و اجرا (لوکال)
+* **Entry**: A general item, such as a server, email account, bank account, hosting service, etc. Each entry contains a title, category, and general notes.
+* **Section**: Each entry can contain multiple sections. For example, a server can have SSH, a hosting panel, and a database. Each section can have its own URL, username, password, and additional information.
+
+This structure is designed specifically for scenarios where a single server or service has multiple separate components, each with its own login credentials.
+
+## Installation and Local Setup
 
 ```bash
-# ساخت محیط مجازی
+# Create a virtual environment
 python3 -m venv venv
-source venv/bin/activate   # ویندوز: venv\Scripts\activate
 
-# نصب پکیج‌ها
+# Activate the virtual environment
+source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 
-# ساخت جدول‌های دیتابیس
+# Create database tables
 python manage.py migrate
 
-# ساخت یوزر ادمین (این یوزر همون کسیه که وارد سایت میشه)
+# Create an admin user
 python manage.py createsuperuser
 
-# اجرای سرور
+# Start the development server
 python manage.py runserver
 ```
 
-بعد از اجرا:
+After starting the server:
 
-- صفحه‌ی اصلی (لیست و جستجو): http://127.0.0.1:8000/
-- پنل ادمین (برای اضافه/ویرایش/حذف آیتم‌ها و بخش‌ها): http://127.0.0.1:8000/admin/
+* **Main page (list and search):** `http://127.0.0.1:8000/`
+* **Admin Panel (add/edit/delete entries and sections):** `http://127.0.0.1:8000/admin/`
 
-با یوزر/پسوردی که در `createsuperuser` ساختی وارد شو — همون یوزر هم برای صفحه‌ی
-اصلی و هم برای پنل ادمین استفاده می‌شه (لاگین مشترک).
+Log in using the username and password you created with `createsuperuser`.
 
-## نکته: یک سری داده‌ی نمونه در دیتابیس هست
+The same user account is used to access both the main website and the Django Admin Panel.
 
-برای این‌که ببینی سایت چطور کار می‌کنه، از قبل دو آیتم نمونه (یک سرور و یک ایمیل)
-با یوزر/پسورد الکی توش هست. هروقت خواستی می‌تونی از پنل ادمین پاکشون کنی، یا
-اگه می‌خوای از صفر شروع کنی کافیه فایل `db.sqlite3` رو حذف کنی و دوباره
-`migrate` و `createsuperuser` رو بزنی.
+## Sample Data
 
-یوزر ادمین نمونه‌ای که از قبل ساخته شده:
-- یوزرنیم: `admin`
-- پسورد: `admin12345`
+The project includes two sample entries in the database so you can quickly see how the application works. They contain fake credentials for demonstration purposes.
 
-**پیشنهاد می‌کنم همین الان پسوردش رو از پنل ادمین (بخش Users) عوض کنی.**
+You can delete them from the Admin Panel whenever you want.
 
-## اضافه کردن آیتم جدید
+If you want to start completely from scratch, simply delete the `db.sqlite3` file and run:
 
-1. برو به `/admin/` و وارد شو.
-2. روی «آیتم‌ها» (Entries) کلیک کن و «افزودن آیتم» رو بزن.
-3. عنوان، دسته‌بندی و یادداشت کلی رو پر کن.
-4. پایین همون صفحه، بخش «بخش‌ها» (Sections) هست — برای هر قسمت جدا
-   (مثلا SSH، پنل هاست، دیتابیس) یک ردیف اضافه کن و لینک/یوزرنیم/رمز رو بنویس.
-5. ذخیره کن — الان توی صفحه‌ی اصلی سایت می‌بینیش.
-
-## جستجو
-
-جستجو در صفحه‌ی اصلی هم‌زمان توی عنوان، دسته‌بندی، یادداشت، و همچنین عنوان بخش‌ها،
-لینک‌ها، یوزرنیم‌ها و فیلد اطلاعات اضافه انجام می‌شه.
-
-## امنیت (چون لوکاله ولی بازم رمزه)
-
-- این پروژه با `DEBUG = True` تنظیم شده که فقط برای اجرای لوکال مناسبه — **آن‌لاین
-  پابلیش نکن**.
-- رمزها به‌صورت متن ساده (plain text) توی دیتابیس sqlite ذخیره می‌شن (نه رمزنگاری‌شده)
-  چون قرار نیست جایی جز کامپیوتر خودت اجرا بشه. اگه بخوای بعدا رمزنگاری هم اضافه کنیم
-  (مثلا با یک کلید master password)، بگو تا اضافه کنم.
-- تمام صفحات (لیست، جزئیات) فقط برای کاربر لاگین‌کرده (staff/admin) قابل مشاهده‌ست.
-
-## ساختار پروژه
-
+```bash
+python manage.py migrate
+python manage.py createsuperuser
 ```
-vaultsite/          تنظیمات اصلی جنگو
-vault/               اپ اصلی
-  models.py           مدل‌های Entry و Section
-  admin.py             ثبت مدل‌ها در پنل ادمین (با inline برای بخش‌ها)
-  views.py             ویوهای لیست/جستجو و جزئیات
-  templates/vault/     قالب‌های HTML
-  static/vault/        CSS و جاوااسکریپت (دکمه‌ی کپی)
+
+### Sample Admin Account
+
+A sample admin account is included:
+
+* **Username:** `admin`
+* **Password:** `admin12345`
+
+**For security, change this password immediately from the Admin Panel under the Users section.**
+
+## Adding a New Entry
+
+1. Go to `/admin/` and log in.
+2. Click **Entries** and select **Add Entry**.
+3. Enter the title, category, and general notes.
+4. At the bottom of the page, you will find the **Sections** area. Add a separate row for each component, such as SSH, Hosting Panel, Database, FTP, etc.
+5. Enter the URL, username, password, and any additional information.
+6. Save the entry.
+
+The new entry will now appear on the main page.
+
+## Search
+
+The search feature on the main page searches across all of the following fields:
+
+* Entry title
+* Category
+* General notes
+* Section titles
+* URLs
+* Usernames
+* Additional information
+
+This makes it easy to quickly find a server, service, account, or specific credential.
+
+## Security
+
+Although this application is intended for local use, it still stores sensitive information and should be treated carefully.
+
+* The project is configured with `DEBUG = True`, which is suitable only for local development. **Do not publish this configuration to the Internet.**
+* Passwords are currently stored as plain text in the SQLite database. They are **not encrypted** because the application is intended to run only on your local computer.
+* If needed, encryption can be added later using a **master password** or another secure key-management mechanism.
+* All main pages, including the entry list and entry details, are accessible only to authenticated staff/admin users.
+* The Django Admin Panel is used to manage all entries and sections.
+
+> **Important:** If the database file or the computer itself is compromised, the stored credentials may be exposed because passwords are currently stored in plain text.
+
+## Project Structure
+
+```text
+vaultsite/                  Main Django project configuration
+│
+├── vault/                  Main application
+│   ├── models.py           Entry and Section models
+│   ├── admin.py            Django Admin configuration with Section inline
+│   ├── views.py            List, search, and detail views
+│   │
+│   ├── templates/
+│   │   └── vault/          HTML templates
+│   │
+│   └── static/
+│       └── vault/          CSS and JavaScript files
+│                            (including copy functionality)
+│
+├── db.sqlite3              SQLite database
+├── manage.py               Django management script
+└── requirements.txt        Python dependencies
 ```
