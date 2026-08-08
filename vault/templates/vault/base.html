@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}Vault{% endblock %}</title>
+
+  <link rel="stylesheet" href="{% static 'vault/style.css' %}">
+</head>
+
+<body>
+
+  <div class="topbar">
+
+    <a class="brand" href="{% url 'vault:entry_list' %}">
+      <span class="mark">GV</span>
+      <span>Vault</span>
+    </a>
+
+    <div class="user-box">
+
+      {% if request.user.is_authenticated %}
+
+        <span>{{ request.user.username }}</span>
+
+        <a href="{% url 'admin:index' %}">
+          Admin Panel
+        </a>
+
+        <form
+          action="{% url 'logout' %}"
+          method="post"
+          style="display:inline; margin:0;"
+        >
+          {% csrf_token %}
+
+          <button
+            type="submit"
+            style="
+              background:none;
+              border:1px solid var(--border);
+              color:var(--text-dim);
+              padding:6px 12px;
+              border-radius:8px;
+              cursor:pointer;
+              font-family:var(--sans);
+              font-size:0.85rem;
+            "
+          >
+            Logout
+          </button>
+
+        </form>
+
+      {% endif %}
+
+    </div>
+
+  </div>
+
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+
+  <script src="{% static 'vault/copy.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
+
+</body>
+</html>
+

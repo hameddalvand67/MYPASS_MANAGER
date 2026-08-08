@@ -1,0 +1,164 @@
+{% extends "vault/base.html" %}
+
+{% block title %}{{ entry.title }} — Vault{% endblock %}
+
+{% block content %}
+
+  <div class="page-head">
+    <a href="{% url 'vault:entry_list' %}" class="back-link">
+      ← Back to Entry List
+    </a>
+
+    <h1>{{ entry.title }}</h1>
+
+    {% if entry.notes %}
+      <div class="sub">
+        {{ entry.notes }}
+      </div>
+    {% endif %}
+  </div>
+
+
+  {% if entry.sections.all %}
+
+    <div class="section-list">
+
+      {% for section in entry.sections.all %}
+
+        <div class="section-card">
+
+          <h2>{{ section.label }}</h2>
+
+          <div class="field-row">
+            <span class="field-label">URL</span>
+
+            {% if section.url %}
+              <a
+                class="field-value"
+                href="{{ section.url }}"
+                target="_blank"
+                rel="noopener"
+              >
+                {{ section.url }}
+              </a>
+
+              <button
+                class="copy-btn"
+                data-copy="{{ section.url }}"
+                onclick="vaultCopy(this, this.dataset.copy)"
+              >
+                Copy
+              </button>
+
+            {% else %}
+              <span class="field-value empty">—</span>
+            {% endif %}
+          </div>
+
+
+          <div class="field-row">
+            <span class="field-label">Username</span>
+
+            {% if section.username %}
+              <span class="field-value">
+                {{ section.username }}
+              </span>
+
+              <button
+                class="copy-btn"
+                data-copy="{{ section.username }}"
+                onclick="vaultCopy(this, this.dataset.copy)"
+              >
+                Copy
+              </button>
+
+            {% else %}
+              <span class="field-value empty">—</span>
+            {% endif %}
+          </div>
+
+
+          <div class="field-row">
+            <span class="field-label">Password</span>
+
+            {% if section.password %}
+
+              <span
+                class="field-value pwd-mask"
+                data-real="{{ section.password }}"
+              >
+                ••••••••
+              </span>
+
+              <button
+                class="copy-btn"
+                data-copy="{{ section.password }}"
+                onclick="togglePwd(this)"
+                style="margin-left:6px;"
+              >
+                Show
+              </button>
+
+              <button
+                class="copy-btn"
+                data-copy="{{ section.password }}"
+                onclick="vaultCopy(this, this.dataset.copy)"
+              >
+                Copy
+              </button>
+
+            {% else %}
+              <span class="field-value empty">—</span>
+            {% endif %}
+          </div>
+
+
+          {% if section.extra %}
+
+            <div class="field-row extra">
+
+              <span class="field-label">
+                Additional Information
+              </span>
+
+              <pre class="field-value code-value"><code>{{ section.extra }}</code></pre>
+
+              <button
+                class="copy-btn"
+                data-copy="{{ section.extra|escape }}"
+                onclick="vaultCopy(this, this.dataset.copy)"
+              >
+                Copy
+              </button>
+
+            </div>
+
+          {% endif %}
+
+        </div>
+
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+
+    <div class="empty-state">
+      This entry does not have any sections yet.
+      Add a section from the
+      <a
+        href="{% url 'admin:index' %}"
+        style="color:var(--accent)"
+      >
+        Admin Panel
+      </a>.
+    </div>
+
+  {% endif %}
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+{% endblock %}

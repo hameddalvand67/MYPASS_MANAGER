@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Vault</title>
+  <link rel="stylesheet" href="{% static 'vault/style.css' %}">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="mark-big">GV</div>
+
+      <h1>Login to Vault</h1>
+
+      <form method="post">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <ul class="errorlist">
+            {% for error in form.non_field_errors %}
+              <li>Invalid username or password</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <label for="id_username">Username</label>
+        <input
+          type="text"
+          name="username"
+          id="id_username"
+          autofocus
+          required
+        >
+
+        <label for="id_password">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="id_password"
+          required
+        >
+
+        <button type="submit">Login</button>
+
+        <input type="hidden" name="next" value="{{ next }}">
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+{% extends "vault/base.html" %}
+{% block title %}Vault — Entry List{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Entry List</h1>
+
+    <div class="sub">
+      {% if query %}
+        {{ entries|length }} results for "{{ query }}" out of {{ total_count }} entries
+      {% else %}
+        {{ total_count }} entries registered
+      {% endif %}
+    </div>
+  </div>
+
+  <form class="search-form" method="get" action="{% url 'vault:entry_list' %}">
+    <input
+      type="text"
+      name="q"
+      value="{{ query }}"
+      placeholder="Search by title, category, URL, username..."
+      autofocus
+    >
+
+    <button type="submit">Search</button>
+
+    {% if query %}
+      <a class="clear-link" href="{% url 'vault:entry_list' %}">
+        Clear
+      </a>
+    {% endif %}
+  </form>
+
+  {% if entries %}
+    <div class="entry-list">
+      {% for entry in entries %}
+
+        <a
+          class="entry-card"
+          href="{% url 'vault:entry_detail' entry.pk %}"
+        >
+          <div class="row1">
+
+            <span class="title">
+              {{ entry.title }}
+            </span>
+
+            {% if entry.category %}
+              <span class="category">
+                {{ entry.category }}
+              </span>
+            {% endif %}
+
+          </div>
+
+          <div class="meta">
+            <span>
+              {{ entry.sections.count }} sections
+            </span>
+
+            <span>
+              Last updated: {{ entry.updated_at|date:"Y/m/d H:i" }}
+            </span>
+          </div>
+
+        </a>
+
+      {% endfor %}
+    </div>
+
+  {% else %}
+
+    <div class="empty-state">
+
+      {% if query %}
+        No results found for "{{ query }}".
+      {% else %}
+        No entries have been added yet.
+        Add a new entry from
+        <a
+          href="{% url 'admin:index' %}"
+          style="color:var(--accent)"
+        >
+          Admin Panel
+        </a>.
+      {% endif %}
+
+    </div>
+
+  {% endif %}
+
+{% endblock %}
